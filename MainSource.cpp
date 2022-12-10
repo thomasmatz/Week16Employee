@@ -16,14 +16,15 @@ using namespace std;
 
 //Function prototypes
 
-void Test_Methods();
 void Display_Class_Members(const Employee_C &);
 Employee_C* Fill_Array();
 void Extract_ID(const Employee_C [], fstream&);
 void Find_Employee(fstream&, int, int*);
-void Test_Salary_Setting(Employee_C);
 
-const int MAX_NAME_SIZE = 61;
+void Test_Salary_Setting(Employee_C &);
+void Test_Methods();
+
+const int MAX_NAME = 61;
 int main()
 {
 	cout << setprecision(2) << fixed;
@@ -31,9 +32,16 @@ int main()
 	Employee_C *Employee_Ptr;
 	string binaryFN;	 
 	int searchID,position;
-	bool otraVez = true;
-	//cout << "\nI will call a test function first.";
-	//Test_Methods();
+	bool otraVez = true, testFlag = false;
+	
+	cout << "\nEnter 1 if you want to run tests; 0 if not> ";
+	cin >> testFlag;
+	cin.ignore();
+
+	if (testFlag)
+	{ cout << "\nI will call a test function first.";
+		Test_Methods();
+	}
 
 	cout << "\nEnter a name for a binary file.> ";
 	getline(cin, binaryFN);//Step 2 when working with files
@@ -43,16 +51,23 @@ int main()
 	binaryFile.open(binaryFN, ios::in | ios::out | ios::trunc | ios::binary);
 
 	Employee_Ptr = Fill_Array();
-	//test that the array is properly filled
-	//cout << Employee_Ptr->Get_FullName();
-	//for (int j = 0; j < 6; j++)
-	//	Display_Class_Members(*(Employee_Ptr + j));
 
-	//test the update of the salary setting
-	/*int k;
-	cout << "\nEnter an index value: ";
-	cin >> k;
-	Test_Salary_Setting(*(Employee_Ptr + k));*/
+	if (testFlag)
+	{
+		//test that the array is properly filled
+		cout << Employee_Ptr->Get_FullName();
+		for (int j = 0; j < 6; j++)
+			Display_Class_Members(*(Employee_Ptr + j));
+	}
+
+	if (testFlag)
+		//test the update of the salary setting
+	{
+		int k;
+		cout << "\nEnter an index value: ";
+		cin >> k;
+		Test_Salary_Setting(*(Employee_Ptr + k));
+	}
 
 	Extract_ID(Employee_Ptr, binaryFile);
 
@@ -81,64 +96,9 @@ int main()
 	delete[]Employee_Ptr;
 	Employee_Ptr = nullptr;
 	
-
 	cout << endl << endl;
 	system("pause");
 	return 0;
-}
-
-
-
-
-void Test_Salary_Setting(Employee_C xEmploy)
-{
-	Display_Class_Members(xEmploy);
-	
-	double newSalary;
-	
-	cout << "\nEnter a new salary> ";
-	cin >> newSalary;
-	xEmploy.Set_Salary(newSalary);
-	Display_Class_Members(xEmploy);
-}
-void Test_Methods()
-{
-	const int TEST_SIZE = 5;
-	
-	Employee_C testEmployee[TEST_SIZE];
-	int i = 0;
-	bool again = true;;
-	while (again)
-	{
-		char enteredName[MAX_NAME_SIZE];
-		int enteredID;
-		double enteredSalary;
-		char enteredSex;
-		cout << "\nEnter the following: ";
-		cout << "\nfull name> ";
-		cin.get(enteredName, MAX_NAME_SIZE);
-		cin.clear();
-		cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-		cout << "\nID:> ";
-		cin >> enteredID;
-		cout << "\nSalary> ";
-		cin >> enteredSalary;
-		cout << "\nSex> ";
-		cin >> enteredSex;
-
-		testEmployee[i].Set_FullName(enteredName);
-		testEmployee[i].Set_IDNumber(enteredID);
-		testEmployee[i].Set_Salary(enteredSalary);
-		testEmployee[i].Set_Sex(enteredSex);
-
-		Display_Class_Members(testEmployee[i]);
-
-		i++;
-		cout << "\nEnter 1 to continue; 0 to quit> ";
-		cin >> again;
-		cin.ignore();
-	}
 }
 
 void Display_Class_Members(const Employee_C &xEmplObject)
@@ -157,10 +117,10 @@ Employee_C* Fill_Array()
 	//It first creates an array of Employee_C dynamically
 
 	Employee_C* enteredEmployee_P = new Employee_C[100];
-	//Employee_C tempEmployee;
+	
 	bool again = true;
 	int index = 0, enteredID;
-	char enteredName[MAX_NAME_SIZE];
+	char enteredName[MAX_NAME];
 	double enteredSalary;
 	char enteredSex;
 
@@ -176,7 +136,7 @@ Employee_C* Fill_Array()
 		//	 in the free store is deleted.
 		Employee_C* tempEmployee_P = new Employee_C;;
 		cout << "\nEnter the employee's full name.> ";
-		cin.get(enteredName, MAX_NAME_SIZE);
+		cin.get(enteredName, MAX_NAME);
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -198,7 +158,6 @@ Employee_C* Fill_Array()
 		cout << endl;
 		cout << tempEmployee_P->Get_Salary();*/
 
-
 		tempEmployee_P->Set_Salary(enteredSalary);
 
 		//check salary after setting
@@ -219,7 +178,6 @@ Employee_C* Fill_Array()
 		//I want to delete tempEmployee at the bottom of the loop
 		delete tempEmployee_P;
 		tempEmployee_P = nullptr;
-
 	}
 	return zeroElement_P;
 }

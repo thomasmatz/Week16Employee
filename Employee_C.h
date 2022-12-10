@@ -22,6 +22,7 @@ public:
 	double Get_Salary() const;
 	char Get_Sex() const;
 	double Get_TotalOfAllSalaries() const;
+	void Reset_TotalOfAllSalaries();
 
 private:
 	static const int MAX_NAME_SIZE = 61;

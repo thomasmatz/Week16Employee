@@ -76,3 +76,8 @@ double Employee_C::Get_TotalOfAllSalaries() const
 {
 	return totalOfAllSalaries;
 }
+
+void Employee_C::Reset_TotalOfAllSalaries()
+{
+	totalOfAllSalaries = 0;
+}
