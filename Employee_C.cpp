@@ -8,6 +8,9 @@ Employee Class implementation file
 
 #include "Employee_C.h"
 #include <cstring>
+#include <iostream>
+
+using namespace std;
 
 double Employee_C::totalOfAllSalaries = 0;
 
@@ -18,6 +21,7 @@ Employee_C::Employee_C()
 	idNumber = 0;
 	salary = 0;
 	sex = ' ';
+	//cout << "\n\nThe constructor has made a new object.";
 }
 
 void Employee_C::Set_FullName(char xName[])
