@@ -12,7 +12,7 @@ class Employee_C
 {
 public:
 	Employee_C();
-	//~Employee_C();
+	~Employee_C();
 	void Set_FullName(char[]);
 	void Set_IDNumber(int);
 	void Set_Salary(double);
@@ -23,18 +23,13 @@ public:
 	char Get_Sex() const;
 	double Get_TotalOfAllSalaries() const;
 	void Reset_TotalOfAllSalaries();
-
 private:
 	static const int MAX_NAME_SIZE = 61;
-	char fullName[MAX_NAME_SIZE];
+	//char fullName[MAX_NAME_SIZE];
+	char* fName_Ptr;
 	int idNumber;
 	double salary;
 	char sex;
 	static double totalOfAllSalaries;
 };
-
-//Employee_C::~Employee_C()
-//{
-//}
-
 #endif // !Employee_C_H

@@ -16,24 +16,26 @@ double Employee_C::totalOfAllSalaries = 0;
 
 Employee_C::Employee_C()
 {
-	fullName[0] = ' ';
-	fullName[1] = '\0';
+	fName_Ptr = nullptr;
 	idNumber = 0;
 	salary = 0;
 	sex = ' ';
 	//cout << "\n\nThe constructor has made a new object.";
 }
-
+Employee_C::~Employee_C()
+{
+	delete[] fName_Ptr;
+	//cout << "\n\nThe destructor has just run.";
+}
 void Employee_C::Set_FullName(char xName[])
 {
-	strcpy(fullName, xName);
+	fName_Ptr = new char[MAX_NAME_SIZE];
+	strcpy(fName_Ptr, xName);
 }
-
 void Employee_C::Set_IDNumber(int xID)
 {
 	idNumber = xID;
 }
-
 void Employee_C::Set_Salary(double xSal)
 {
 	//first deduct the current salary from the static variable
@@ -41,43 +43,37 @@ void Employee_C::Set_Salary(double xSal)
 	salary = xSal;
 	totalOfAllSalaries += salary;
 }
-
 void Employee_C::Set_Sex(char xSex)
 {
 	sex = xSex;
 }
-
-/**the programmer must delete the allocated memory after calling
-this function*/
 char* Employee_C::Get_FullName() const
 {
-	char* name_Ptr = new char[MAX_NAME_SIZE];
-
-	strcpy(name_Ptr, fullName);
-	return name_Ptr;
+	//fName_Ptr = new char[MAX_NAME_SIZE];
+	//strcpy(fName_Ptr, fullName);
+	return fName_Ptr;
 }
-
 int Employee_C::Get_IDNumber() const
 {
 	return idNumber;
 }
-
 double Employee_C::Get_Salary() const
 {
 	return salary;
 }
-
 char Employee_C::Get_Sex() const
 {
 	return sex;
 }
-
 double Employee_C::Get_TotalOfAllSalaries() const
 {
 	return totalOfAllSalaries;
 }
-
 void Employee_C::Reset_TotalOfAllSalaries()
 {
+	//  This method is needed for testing.
+	//	after making a test database, there
+	//	needs to be a way to set the total 
+	//	back to 0.
 	totalOfAllSalaries = 0;
 }

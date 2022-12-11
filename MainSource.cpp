@@ -5,6 +5,9 @@ Tom Matz
 CIS 1202.201
 */
 
+
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <iostream>
 #include "Employee_C.h"
 #include <fstream>//step 1 for working with files
@@ -34,14 +37,13 @@ int main()
 	int searchID,position;
 	bool otraVez = true, testFlag = false;
 	
-	cout << "\nEnter 1 if you want to run tests; 0 if not> ";
-	cin >> testFlag;
-	cin.ignore();
-
+	//*cout << "\nEnter 1 if you want to run tests; 0 if not> ";
+	//*cin >> testFlag;
+	/*cin.ignore();
 	if (testFlag)
 	{ cout << "\nI will call a test function first.";
 		Test_Methods();
-	}
+	}*/
 
 	cout << "\nEnter a name for a binary file.> ";
 	getline(cin, binaryFN);//Step 2 when working with files
@@ -60,16 +62,23 @@ int main()
 			Display_Class_Members(*(Employee_Ptr + j));
 	}
 
-	if (testFlag)
+	Extract_ID(Employee_Ptr, binaryFile);
+
+	cout << "\n\tWould you like to change a salary?\n";
+	cout << "If so, enter 1; if not enter 0> ";
+	cin >> testFlag;
+
+	while (testFlag)
 		//test the update of the salary setting
 	{
 		int k;
-		cout << "\nEnter an index value: ";
+		cout << "\nEnter an index value of 0 to the highest number you entered: ";
 		cin >> k;
 		Test_Salary_Setting(*(Employee_Ptr + k));
+		cout << "\n\tWould you like to change another salary?\n";
+		cout << "If so, enter 1; if not enter 0> ";
+		cin >> testFlag;
 	}
-
-	Extract_ID(Employee_Ptr, binaryFile);
 
 	while (otraVez)
 	{
@@ -103,6 +112,10 @@ int main()
 
 void Display_Class_Members(const Employee_C &xEmplObject)
 {
+	// NOTE:  the method Get_FullName returns a pointer
+	//		to an array in the free store.  This memory
+	//		must be deleted.
+	
 	cout << "\nHere are the values for this employee: ";
 	cout << "\nName: " << xEmplObject.Get_FullName();
 	cout << "\nID: " << xEmplObject.Get_IDNumber();
@@ -115,26 +128,45 @@ Employee_C* Fill_Array()
 {
 	//this function returns a pointer to the main program
 	//It first creates an array of Employee_C dynamically
+	// The returned pointer points to the 1st array element.
+	//*It is incumbent on the calling program to DELETE this pointer[]
+	//		when they are finished using it.
 
 	Employee_C* enteredEmployee_P = new Employee_C[100];
 	
 	bool again = true;
-	int index = 0, enteredID;
+	int enteredID;
 	char enteredName[MAX_NAME];
 	double enteredSalary;
 	char enteredSex;
 
 	//assign another pointer that points to the first array element
+	//	The purpose of this pointer is to hold the address of the 1st array element.
+	//		This is what is returned to the calling routine.  Without this
+	//		the function would return the address of the (n+1) element
+	//		after going through the while loop n times.
+
 	Employee_C* zeroElement_P = nullptr;
 	zeroElement_P = enteredEmployee_P;
 
 	while (again)
 	{
-		//The employee object is created with a pointer.
-		//The Employee class constructor will operate with each creation.
-		//	and at the bottom of the loop the allocated memory
-		//	 in the free store is deleted.
-		Employee_C* tempEmployee_P = new Employee_C;;
+		//	NOTE:  I did not follow the hint as written in the requirements.
+		//
+		//	The reason for a pointer (instead of just an object) is:
+		//		We need the Employee class object variable to be at its initial state
+		//		when we make all the assignments.  More specifically,
+		//		a problem occurs when Set_Salary is called.  If a single
+		//		object is re-used, it will have a value for salary when
+		//		set salary is called (from the previous pass).  This value
+		//		will be deducted from the static variable.  So the static
+		//		variable does not get accumulated.
+		// Using a pointer object that is incremented
+		//	on each pass through the loop.  Thus
+		//	initializing Salary to 0.
+		//Employee_C* tempEmployee_P = new Employee_C;
+
+		//*** Begin inputting the record info
 		cout << "\nEnter the employee's full name.> ";
 		cin.get(enteredName, MAX_NAME);
 		cin.clear();
@@ -142,42 +174,41 @@ Employee_C* Fill_Array()
 
 		cout << "\nEnter the employee's ID number.> ";
 		cin >> enteredID;
-		
 		cout << "\nEnter the employee's salary.> ";
 		cin >> enteredSalary;
-
 		cout << "\nEnter the employee's sex.> ";
 		cin >> enteredSex;
 
-		tempEmployee_P->Set_FullName(enteredName);
-		
-		tempEmployee_P->Set_IDNumber(enteredID);
+		//tempEmployee_P->Set_FullName(enteredName);
+		//tempEmployee_P->Set_IDNumber(enteredID);
 
 		//check salary before settin
 		/*cout << "\ntotal " << tempEmployee_P->Get_TotalOfAllSalaries();
 		cout << endl;
 		cout << tempEmployee_P->Get_Salary();*/
 
-		tempEmployee_P->Set_Salary(enteredSalary);
+		//tempEmployee_P->Set_Salary(enteredSalary);
 
-		//check salary after setting
-		/*cout << "\ntotal " << tempEmployee_P->Get_TotalOfAllSalaries();
-		cout << endl;
-		cout << tempEmployee_P->Get_Salary();*/
+		////check salary after setting
+		///*cout << "\ntotal " << tempEmployee_P->Get_TotalOfAllSalaries();
+		//cout << endl;
+		//cout << tempEmployee_P->Get_Salary();*/
 
-		tempEmployee_P->Set_Sex(enteredSex);
+		//tempEmployee_P->Set_Sex(enteredSex);
+		////Here we assign the single pointer contents to the array pointer contents
+		//*enteredEmployee_P = *tempEmployee_P;
 		
-		*enteredEmployee_P = *tempEmployee_P;
+		//filling the array directly
+		enteredEmployee_P->Set_FullName(enteredName);
+		enteredEmployee_P->Set_IDNumber(enteredID);
+		enteredEmployee_P->Set_Salary(enteredSalary);
+		enteredEmployee_P->Set_Sex(enteredSex);
 
 		cout << "\nEnter 1 to add another employee or 0 to quit.> ";
 		cin >> again;
 		cin.ignore();
 
 		enteredEmployee_P++;
-
-		//I want to delete tempEmployee at the bottom of the loop
-		delete tempEmployee_P;
-		tempEmployee_P = nullptr;
 	}
 	return zeroElement_P;
 }
@@ -187,7 +218,8 @@ void Extract_ID(const Employee_C empArray[], fstream &fileObjectPar)
 	//this function finds the ID for each array element
 	//	and writes it to a binary file
 	// the while loop checks the flag to see if there is more to process
-	// then it increments the index each pass through
+	// then it increments the index each pass through  (This assumes
+	//	that an ID of 0 means no record has been added.)
 	int i = 0;
 	int tempID;
 	
@@ -195,7 +227,7 @@ void Extract_ID(const Employee_C empArray[], fstream &fileObjectPar)
 	bool moreToProcess = 1;
 	while (moreToProcess)
 	{
-		tempID = empArray[i].Get_IDNumber();
+		tempID = empArray[i].Get_IDNumber();//access the ID private data
 		//cout << "\n tempID = " << tempID;
 		
 		if (tempID > 0)
@@ -210,6 +242,10 @@ void Extract_ID(const Employee_C empArray[], fstream &fileObjectPar)
 
 void Find_Employee(fstream &fileObjectPar, int xID,int *Position)
 {
+	//This function searches the fileObjectParameter (a binary file)
+	//  for the xID parameter.
+	//	  If the ID is found, the position(or record) is returned via the
+	//	3rd parameter (Position).
 	int foundPos = -1;
 	int fileID, byteNum;
 	fileObjectPar.clear();// clear the EOF flag
@@ -229,7 +265,8 @@ void Find_Employee(fstream &fileObjectPar, int xID,int *Position)
 		{
 			byteNum = fileObjectPar.tellg();
 			//cout << "\nBytenum = " << byteNum;
-			foundPos = (byteNum / 4)-1;
+			foundPos = (byteNum / 4)-1;  //Subtract 1 because the read operation
+											//advances one record
 		}
 	}
 	*Position = foundPos;

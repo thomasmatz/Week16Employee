@@ -22,10 +22,12 @@ const int NAME_LENGTH = 61;
 
 void Test_Salary_Setting(Employee_C &xEmploy)
 {
+	//The parameter is passed by reference, because
+	//this function will purposefully change
+	//	the salary in the "database".
 	Display_Class_Members(xEmploy);
 
 	double newSalary;
-
 	cout << "\nEnter a new salary> ";
 	cin >> newSalary;
 	xEmploy.Set_Salary(newSalary);
@@ -34,12 +36,15 @@ void Test_Salary_Setting(Employee_C &xEmploy)
 
 void Test_Methods()
 {
+	//This function tests the mutators
+	// of the Employee class.  It makes a test array
+	// of 5 elements.
 	const int TEST_SIZE = 5;
 
 	Employee_C testEmployee[TEST_SIZE];
 	int i = 0;
-	bool again = true;;
-	while (again)
+	bool again = true;
+	while (again && i<5)
 	{
 		char enteredName[NAME_LENGTH];
 		int enteredID;
